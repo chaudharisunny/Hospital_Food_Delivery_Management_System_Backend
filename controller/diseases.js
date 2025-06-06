@@ -3,7 +3,7 @@ const diseases = require("../model/diseases");
 const allDisease=async(req,res)=>{
     try {
         const allDisease=await diseases.find();
-        return res.status(200).json({result:allDisease})
+        return res.status(200).json({message:"All diseases route is working"},{result:allDisease})
     } catch (error) {
         console.log(error);
         res.status(500).json('server error')
