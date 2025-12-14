@@ -9,18 +9,28 @@ const indexRouter = require('./router/index');
 const app = express();
 const PORT = process.env.PORT || 3050;
 
+// middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+// routes
 app.use('/api/v1', indexRouter);
 
+// START SERVER ONLY AFTER DB CONNECTS
 const startServer = async () => {
-  await connectDB();
+  try {
+    await connectDB();               // ⬅️ DB FIRST
+    console.log('Database ready');
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+    app.listen(PORT, () => {         // ⬅️ SERVER AFTER
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('Server not started ❌');
+    process.exit(1);
+  }
 };
 
 startServer();
