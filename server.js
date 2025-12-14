@@ -15,31 +15,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+// Disable mongoose buffering (prevents timeout issues)
+mongoose.set('bufferCommands', false);
+
 // Routes
 app.use('/api/v1', indexRouter);
 
-// Health check (VERY useful on Render)
+// Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
-// Disable mongoose buffering (prevents silent timeouts)
-mongoose.set('bufferCommands', false);
-
-// Start server only after DB connects
+// Start server ONLY after DB connects
 const startServer = async () => {
   try {
-    console.log('Starting server...');
-    await connectDB(); // ⬅️ DB first
-    console.log('Database connected');
+    await connectDB(); // ⬅️ DB FIRST
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 
   } catch (error) {
-    console.error('Server failed to start ❌');
-    console.error(error.message);
+    console.error('Server not started due to DB error ❌');
     process.exit(1);
   }
 };
