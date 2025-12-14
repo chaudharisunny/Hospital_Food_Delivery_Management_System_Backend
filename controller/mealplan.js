@@ -22,8 +22,9 @@ const createMealPlan=async(req,res)=>{
 
   const updateMealPlan=async(req,res)=>{
     try {
-       
-        const update_Data=await mealPlan.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        const{id}=req.params
+
+        const update_Data=await mealPlan.findByIdAndUpdate(id,req.body,{new:true})
         if(!update_Data){
           return res.status(404).json({message:'id is not found'})
         }
@@ -34,6 +35,17 @@ const createMealPlan=async(req,res)=>{
       }
     }
 
+    const getMealPlanById = async (req, res) => {
+ try {
+    const mealPlans = await mealPlan.findById(req.params.id).populate('patientId')
+    if (!mealPlans) {
+      return res.status(404).json({ success: false, message: 'Meal Plan not found' });
+    }
+    res.status(200).json({ success: true, result: mealPlans });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
     const deleteMealPlan=async(req,res)=>{
       try {
          
@@ -48,4 +60,4 @@ const createMealPlan=async(req,res)=>{
         }
       }
 
-module.exports={allMealPlan,createMealPlan,updateMealPlan,deleteMealPlan}
+module.exports={allMealPlan,createMealPlan,updateMealPlan,deleteMealPlan,getMealPlanById}

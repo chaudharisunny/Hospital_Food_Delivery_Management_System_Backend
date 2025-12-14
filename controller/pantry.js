@@ -33,6 +33,18 @@ const createPantry=async(req,res)=>{
         res.status(500).json({message:'server error'})
       }
     }
+const getPantryById = async (req, res) => {
+  try {
+    const fonundPantry = await pantry.findById(req.params.id);
+    if (!fonundPantry) {
+      return res.status(404).json({ message: 'Pantry not found' });
+    }
+    res.status(200).json({ result: fonundPantry });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
     const deletePantry=async(req,res)=>{
       try {
@@ -48,4 +60,4 @@ const createPantry=async(req,res)=>{
         }
       }
 
-module.exports={allPantry,createPantry,updatePantry,deletePantry}
+module.exports={allPantry,createPantry,updatePantry,getPantryById,deletePantry}
