@@ -20,17 +20,12 @@ app.use('/api/v1', indexRouter);
 // START SERVER ONLY AFTER DB CONNECTS
 const startServer = async () => {
   try {
-    await connectDB();               // ⬅️ DB FIRST
-    console.log('Database ready');
-
-    app.listen(PORT, () => {         // ⬅️ SERVER AFTER
-      console.log(`Server running on port ${PORT}`);
-    });
-
-  } catch (error) {
-    console.error('Server not started ❌');
+    await connectDB();   // DB FIRST
+    app.listen(PORT);    // SERVER AFTER
+  } catch (err) {
     process.exit(1);
   }
 };
+
 
 startServer();
