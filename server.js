@@ -3,13 +3,15 @@ const express = require("express");
 const cors = require("cors");
 require("./model/db");
 const indexRouter = require("./router/index");
+const connectDB = require("./model/db");
 
 const app = express();
 
+connectDB()
 // ✅ Allowed Frontend URLs
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://hospital-food-delivery-managment-system-frontend-euuvwzm0u.vercel.app"
+  "hospital-food-delivery-managment-system-frontend-euuvwzm0u.vercel.app"
 ];
 
 // ✅ CORS OPTIONS
