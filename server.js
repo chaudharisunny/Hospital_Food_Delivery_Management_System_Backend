@@ -1,33 +1,47 @@
-require('dotenv').config()
-const express=require('express');
-const app=express()
-const port=process.env.PORT
-const bodyPrser=require('body-parser')
-const indexRouter=require('./router/index')
-const db=require('./model/db')
-const cors=require('cors')
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+require("./model/db");
+const indexRouter = require("./router/index");
 
-app.use(bodyPrser.urlencoded({extended:true}))
-app.use(express.json())
+const app = express();
 
+// ✅ Allowed Frontend URLs
 const allowedOrigins = [
-  "http://localhost:5173",               // local frontend
-  "https://hospital-food-delivery-managment-system-frontend-euuvwzm0u.vercel.app"     // deployed frontend
+  "http://localhost:5173",
+  "https://hospital-food-delivery-managment-system-frontend-euuvwzm0u.vercel.app"
 ];
-app.options("*", cors());
-app.use(cors({
+
+// ✅ CORS OPTIONS
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true); // Postman
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("CORS blocked"));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
 
-app.use('/api/v1/',indexRouter)
-app.listen(port,()=>{
-    console.log(`server connected to ${port}`);   
-})
+// ✅ APPLY CORS FIRST
+app.use(cors(corsOptions));
+
+// ✅ PRE-FLIGHT HANDLING (IMPORTANT)
+app.options("*", cors(corsOptions));
+
+// ✅ BODY PARSERS
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ ROUTES
+app.use("/api/v1", indexRouter);
+
+// ✅ SAFE PORT FOR RENDER
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
+});
