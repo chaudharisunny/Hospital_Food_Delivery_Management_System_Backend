@@ -6,14 +6,15 @@ const bodyPrser=require('body-parser')
 const indexRouter=require('./router/index')
 const db=require('./model/db')
 const cors=require('cors')
+
 app.use(bodyPrser.urlencoded({extended:true}))
 app.use(express.json())
 
 const allowedOrigins = [
   "http://localhost:5173",               // local frontend
-  "https://hospital-food-delivery-managment-sy.vercel.app/"     // deployed frontend
+  "https://hospital-food-delivery-managment-system-frontend-euuvwzm0u.vercel.app"     // deployed frontend
 ];
-
+app.options("*", cors());
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true); // Postman
