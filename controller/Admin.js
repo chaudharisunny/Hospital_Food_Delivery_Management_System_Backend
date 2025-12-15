@@ -1,5 +1,5 @@
 const { createToken } = require("../Middleware/CreateToken");
-const admin = require("../model/Admin");
+const Admin = require("../model/Admin");
 const { findByIdAndUpdate } = require("../model/diseases");
 const Profile=require('../model/profile')
 const bcrypt = require("bcrypt");
@@ -16,7 +16,7 @@ const AdminSignup = async (req, res) => {
     }
 
     // Check if email already exists
-    const existingUser = await admin.findOne({ email });
+    const existingUser = await Admin.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ error: "Email already exists!" });
     }
@@ -31,7 +31,7 @@ const AdminSignup = async (req, res) => {
       specialization // now for all roles, optional
     };
 
-    const newAdmin = await admin.create(newAdminData);
+    const newAdmin = await Admin.create(newAdminData);
 
     return res.status(201).json({
       message: "Signup successful! Please log in.",
@@ -60,7 +60,7 @@ const AdminLogin = async (req, res) => {
       return res.status(400).json({ error: "All fields are required!" });
     }
 
-    const user = await admin.findOne({ email });
+    const user = await Admin.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -71,6 +71,7 @@ const AdminLogin = async (req, res) => {
     }
 
     const token = createToken(user);
+
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -79,7 +80,7 @@ const AdminLogin = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("Admin login error:", error);
     return res.status(500).json({ error: "Server error" });
   }
 };
@@ -87,7 +88,7 @@ const AdminLogin = async (req, res) => {
  
 const AllAdmin=async(req,res)=>{
   try {
-  const result=await admin.find()
+  const result=await Admin.find()
   return res.status(200).json({data:result})  
   } catch (error) {
     res.status(500).json({error:'server error'})
@@ -107,7 +108,7 @@ const getProfile=async(req,res)=>{
       return res.status(400).json({error:'id is not found'})
     }
 
-    const showProfile=await admin.findById(id)
+    const showProfile=await Admin.findById(id)
     return res.status(200).json({result:showProfile})
   } catch (error) {
      res.status(500).json({error:'server error'})
@@ -121,7 +122,7 @@ const updateProfile=async(req,res)=>{
       return res.status(400).json({error:'id is not found'})
     }
     const {username,email,password,role,contactus,specialization}=req.body 
-    const editProfile=await admin.findByIdAndUpdate(id,
+    const editProfile=await Admin.findByIdAndUpdate(id,
       username,email,password,role,contactus,specialization,  
        {new:true})
 
